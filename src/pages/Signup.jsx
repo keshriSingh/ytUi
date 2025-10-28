@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../slice/authSlice'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
 const signUpSchema = z.object({
   userName: z.string()
@@ -28,9 +28,16 @@ function SignUp() {
     resolver: zodResolver(signUpSchema)
   })
 
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [apiError, setApiError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch()
+
+  useEffect(() => {
+        if (isAuthenticated) navigate('/');
+      }, [isAuthenticated, navigate]);
+  
 
   const onSubmit = async (data) => {
     try {
@@ -43,6 +50,20 @@ function SignUp() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+   if (loading) {
+    return (
+      <div className="min-h-screen items-center justify-center bg-linear-to-br from-gray-900 to-black flex">
+        <div className="flex flex-col items-center text-center space-y-4">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin animation-delay-1000"></div>
+          </div>
+          <p className="text-white font-semibold">Creating your account...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
