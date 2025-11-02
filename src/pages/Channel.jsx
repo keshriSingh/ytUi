@@ -202,7 +202,7 @@ function ChannelPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
+      <div className="min-h-screen bg-linear-to-br from-gray-900 to-black">
         {/* Header Skeleton */}
         <header className="bg-gray-800/80 backdrop-blur-lg border-b border-gray-700/50 sticky top-0 z-50">
           <div className="flex items-center justify-between p-4 max-w-7xl mx-auto">
@@ -256,7 +256,7 @@ function ChannelPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-20 h-20 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
@@ -286,7 +286,7 @@ function ChannelPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
+    <div className="min-h-screen bg-linear-to-br from-gray-900 to-black">
       {/* Header */}
       <header className="bg-gray-800/80 backdrop-blur-lg border-b border-gray-700/50 sticky top-0 z-50">
         <div className="flex items-center justify-between p-4 max-w-7xl mx-auto">
@@ -343,7 +343,7 @@ function ChannelPage() {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-700/70 transition-all border-2 border-transparent hover:border-gray-600 cursor-pointer"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold shadow-md overflow-hidden">
+                <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold shadow-md overflow-hidden">
                   {user?.avatar ? (
                     <img
                       src={user.avatar}
@@ -364,7 +364,7 @@ function ChannelPage() {
                   {/* User Info */}
                   <div className="px-4 py-3 border-b border-gray-700/50">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
+                      <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
                         {user?.avatar ? (
                           <img
                             src={user.avatar}
@@ -493,7 +493,7 @@ function ChannelPage() {
       {/* Channel Header */}
       <div className="relative">
         {/* Cover Image */}
-        <div className="h-48 bg-gradient-to-r from-purple-600 to-red-600">
+        <div className="h-48 bg-linear-to-r from-purple-600 to-red-600">
           {channel?.coverImage ? (
             <img
               src={channel.coverImage}
@@ -501,7 +501,7 @@ function ChannelPage() {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-purple-600 to-red-600"></div>
+            <div className="w-full h-full bg-linear-to-r from-purple-600 to-red-600"></div>
           )}
         </div>
 
@@ -669,7 +669,7 @@ function ChannelPage() {
                       <div className="absolute bottom-2 right-2 bg-black/90 text-white text-xs px-2 py-1 rounded font-medium">
                         {formatDuration(video.duration)}
                       </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
 
                     <div className="flex space-x-3">
