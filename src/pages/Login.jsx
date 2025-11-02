@@ -16,7 +16,7 @@ function Login() {
     resolver: zodResolver(loginSchema)
   })
 
-  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
+  const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
   const [apiError, setApiError] = useState('')

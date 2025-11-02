@@ -5,6 +5,8 @@ import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import { useDispatch, useSelector } from 'react-redux'
 import { checkAuth } from "./slice/authSlice"
+import VideoPage from "./pages/VideoPage"
+import Channel from "./pages/Channel"
 
 function App() {
   const dispatch = useDispatch();
@@ -18,6 +20,8 @@ function App() {
       <Route path="/" element={isAuthenticated?<Home/>:<Navigate to={'/login'}/>}/>
       <Route path="/login" element={isAuthenticated?<Navigate to={'/'}/>:<Login/>}/>
       <Route path="/signup" element={isAuthenticated?<Navigate to={'/'}/>:<Signup/>}/>
+      <Route path="/watch/:videoId" element={isAuthenticated?<VideoPage/>:''}/>
+      <Route path="/channel/:channelId" element={isAuthenticated?<Channel/>:''}/>
     </Routes>
   )
 }

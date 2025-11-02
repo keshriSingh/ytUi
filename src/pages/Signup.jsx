@@ -28,7 +28,7 @@ function SignUp() {
     resolver: zodResolver(signUpSchema)
   })
 
-  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
+  const { isAuthenticated, loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [apiError, setApiError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
