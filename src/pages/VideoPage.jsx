@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import axiosClient from "../utils/axiosClient";
-import { logoutUser } from "../slice/authSlice";
+import Navbar from "./Navbar";
 
 function VideoPage() {
   const { videoId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const videoRef = useRef(null);
-  const userMenuRef = useRef(null);
   const { user } = useSelector((state) => state.auth);
 
   const [video, setVideo] = useState(null);
@@ -26,9 +24,6 @@ function VideoPage() {
   const [liked, setLiked] = useState(false);
   const [totalSubscriber, setTotalSubscriber] = useState(0);
   const [subscribed, setSubscribed] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-
-  // Comment section states
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [commentLoading, setCommentLoading] = useState(false);
@@ -41,20 +36,6 @@ function VideoPage() {
     fetchRelatedVideos();
     fetchComments();
   }, [videoId]);
-
-  // Close user menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setUserMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const fetchVideo = async () => {
     try {
@@ -128,7 +109,9 @@ function VideoPage() {
             return {
               ...comment,
               isLiked: response.data.data.isLiked,
-              likeCount: (response.data.data.isLiked?parseInt(comment.likeCount)+1:parseInt(comment.likeCount)-1),
+              likeCount: response.data.data.isLiked
+                ? parseInt(comment.likeCount) + 1
+                : parseInt(comment.likeCount) - 1,
             };
           }
           return comment;
@@ -241,16 +224,11 @@ function VideoPage() {
     }
   };
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    navigate("/login");
-  };
-
   const displayedComments = showAllComments ? comments : comments.slice(0, 3);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-white text-lg">Loading video...</p>
@@ -261,7 +239,7 @@ function VideoPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-20 h-20 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
@@ -291,209 +269,8 @@ function VideoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
-      {/* Updated Header */}
-      <header className="bg-gray-800/80 backdrop-blur-lg border-b border-gray-700/50 sticky top-0 z-50">
-        <div className="flex items-center justify-between p-4 max-w-7xl mx-auto">
-          {/* Left Section */}
-          <div className="flex items-center space-x-4">
-            <Link
-              to="/"
-              className="flex items-center space-x-3 group cursor-pointer"
-            >
-              <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
-                </svg>
-              </div>
-              <span className="text-2xl font-bold text-white">StreamHub</span>
-            </Link>
-          </div>
-
-          {/* Search Bar */}
-          <div className="flex-1 max-w-2xl mx-8">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search videos..."
-                className="w-full bg-gray-700/70 border border-gray-600 rounded-full py-3 px-5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
-              />
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-600 hover:bg-red-700 rounded-full p-3 transition-all shadow-md cursor-pointer">
-                <svg
-                  className="w-4 h-4 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          {/* User Menu */}
-          <div className="flex items-center space-x-3">
-            {/* User Avatar with Dropdown */}
-            <div className="relative" ref={userMenuRef}>
-              <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-700/70 transition-all border-2 border-transparent hover:border-gray-600 cursor-pointer"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold shadow-md overflow-hidden">
-                  {user?.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt="User Avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-sm">
-                      {user?.fullName?.charAt(0)?.toUpperCase() || "U"}
-                    </span>
-                  )}
-                </div>
-              </button>
-
-              {/* User Dropdown Menu */}
-              {userMenuOpen && (
-                <div className="absolute right-0 top-14 w-56 bg-gray-800 backdrop-blur-lg border border-gray-700/50 rounded-xl shadow-xl py-2 z-50">
-                  {/* User Info */}
-                  <div className="px-4 py-3 border-b border-gray-700/50">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
-                        {user?.avatar ? (
-                          <img
-                            src={user.avatar}
-                            alt="User Avatar"
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-sm">
-                            {user?.fullName?.charAt(0)?.toUpperCase() || "U"}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white font-semibold truncate text-sm">
-                          {user?.fullName || "User"}
-                        </p>
-                        <p className="text-gray-400 text-xs truncate">
-                          {user?.email || ""}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Menu Items */}
-                  <div className="py-2">
-                    <Link
-                      to="/channel"
-                      className="flex items-center space-x-3 px-4 py-2.5 text-gray-300 hover:bg-red-600 hover:text-white transition-all cursor-pointer group"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <svg
-                        className="w-4 h-4 text-gray-400 group-hover:text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                      <span className="font-medium">Your Channel</span>
-                    </Link>
-
-                    <Link
-                      to="/your-videos"
-                      className="flex items-center space-x-3 px-4 py-2.5 text-gray-300 hover:bg-red-600 hover:text-white transition-all cursor-pointer group"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <svg
-                        className="w-4 h-4 text-gray-400 group-hover:text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <span className="font-medium">Your Videos</span>
-                    </Link>
-
-                    <Link
-                      to="/settings"
-                      className="flex items-center space-x-3 px-4 py-2.5 text-gray-300 hover:bg-red-600 hover:text-white transition-all cursor-pointer group"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <svg
-                        className="w-4 h-4 text-gray-400 group-hover:text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      <span className="font-medium">Settings</span>
-                    </Link>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-gray-700/50 my-1"></div>
-
-                  {/* Logout */}
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center space-x-3 px-4 py-2.5 text-red-400 hover:bg-red-600 hover:text-white transition-all w-full cursor-pointer group"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    <span className="font-medium">Logout</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-linear-to-br from-gray-900 to-black">
+      <Navbar showSidebarToggle={false} />
 
       <div className="max-w-7xl mx-auto p-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -516,7 +293,7 @@ function VideoPage() {
 
               {/* Custom Controls */}
               {showControls && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-4 transition-opacity duration-300">
                   {/* Progress Bar */}
                   <div
                     className="w-full h-2 bg-white/30 rounded-full mb-4 cursor-pointer"
@@ -614,7 +391,7 @@ function VideoPage() {
 
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-3">
+                  <div onClick={()=>navigate('/channel/'+video.owner._id)} className="flex items-center space-x-3 cursor-pointer">
                     <img
                       src={video?.owner?.avatar}
                       alt={video?.owner?.fullName}
@@ -938,8 +715,9 @@ function VideoPage() {
           <div className="lg:col-span-1">
             <h3 className="text-white font-semibold text-lg mb-4">Up Next</h3>
             <div className="space-y-4">
-              {relatedVideos.map((relatedVideo) => (
-                <Link
+              {relatedVideos.map((relatedVideo) =>{
+              if(videoId.toString()!==relatedVideo._id.toString()){
+                  return <Link
                   key={relatedVideo._id}
                   to={`/watch/${relatedVideo._id}`}
                   className="block group cursor-pointer"
@@ -969,7 +747,8 @@ function VideoPage() {
                     </div>
                   </div>
                 </Link>
-              ))}
+                }
+})}
             </div>
           </div>
         </div>

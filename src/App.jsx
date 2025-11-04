@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { checkAuth } from "./slice/authSlice"
 import VideoPage from "./pages/VideoPage"
 import Channel from "./pages/Channel"
+import UploadVideo from "./pages/UploadVideo"
+import EditChannel from "./pages/EditChannel"
 
 function App() {
   const dispatch = useDispatch();
@@ -22,6 +24,8 @@ function App() {
       <Route path="/signup" element={isAuthenticated?<Navigate to={'/'}/>:<Signup/>}/>
       <Route path="/watch/:videoId" element={isAuthenticated?<VideoPage/>:''}/>
       <Route path="/channel/:channelId" element={isAuthenticated?<Channel/>:''}/>
+      <Route path="/upload" element={isAuthenticated?<UploadVideo/>:''} />
+      <Route path="/edit/channel" element={isAuthenticated?<EditChannel/>:''} />
     </Routes>
   )
 }
